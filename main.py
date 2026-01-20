@@ -13,6 +13,10 @@ from sqlalchemy import Column, Integer, String, DateTime, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from pydantic import BaseModel
+from twilio.rest import Client
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- Database Setup ---
 SQLALCHEMY_DATABASE_URL = "sqlite:///./clinic.db"
@@ -30,6 +34,26 @@ class Patient(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 Base.metadata.create_all(bind=engine)
+
+# --- Twilio Setup ---
+TWILIO_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE = os.getenv("TWILIO_PHONE_NUMBER")
+
+def send_sms(to_phone: str, message: str):
+    if not all([TWILIO_SID, TWILIO_TOKEN, TWILIO_PHONE]):
+        print(f"SMS MOCK (No Credentials): To {to_phone} -> {message}")
+        return
+    try:
+        client = Client(TWILIO_SID, TWILIO_TOKEN)
+        client.messages.create(
+            body=message,
+            from_=TWILIO_PHONE,
+            to=to_phone
+        )
+        print(f"SMS SENT: To {to_phone}")
+    except Exception as e:
+        print(f"SMS FAILED: {str(e)}")
 
 # --- FastAPI App ---
 app = FastAPI(title="Smart Clinic Token System")
@@ -94,8 +118,9 @@ async def register_patient(data: PatientCreate, request: Request, db: Session = 
     img.save(img_buffer, format='PNG')
     img_str = base64.b64encode(img_buffer.getvalue()).decode()
     
-    # Mock SMS logic
-    print(f"SMS Alert: Patient {data.name}, Token {next_token} registered. Track: {qr_url}")
+    # Send SMS Notification
+    sms_message = f"Hello {data.name}, your token is #{next_token}. Track your turn live: {qr_url}"
+    send_sms(data.phone, sms_message)
     
     return {
         "id": new_patient.id,
