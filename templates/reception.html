@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reception - Smart Token System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container fade-in">
+        <div class="header">
+            <div>
+                <h1>Clinic Reception</h1>
+                <p style="color: var(--text-light)">Register new patients and issue tokens</p>
+            </div>
+            <div class="btn btn-secondary" id="currentTime">00:00:00</div>
+        </div>
+
+        <div class="card">
+            <form id="registrationForm">
+                <div class="input-group">
+                    <label for="name">Patient Name</label>
+                    <input type="text" id="name" placeholder="Enter patient name" required>
+                </div>
+                <div class="input-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter phone number" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%">Register & Generate Token</button>
+            </form>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <h3>Today's Summary</h3>
+            <div id="summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                <div class="card" style="text-align: center; padding: 1rem;">
+                    <div style="font-size: 0.8rem; color: var(--text-light)">Total Registered</div>
+                    <div id="totalCount" style="font-size: 1.5rem; font-weight: 700">0</div>
+                </div>
+                <!-- More stats can go here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qrModal">
+        <div class="modal-content fade-in">
+            <h2 id="modalTitle">Token #12 Generated</h2>
+            <div id="qrImageContainer" style="margin: 1.5rem 0;">
+                <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px;">
+            </div>
+            <p style="color: var(--text-light); margin-bottom: 1.5rem;">Scan to track your turn live</p>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-secondary" onclick="window.print()" style="flex: 1">Print Token</button>
+                <button class="btn btn-primary" onclick="closeModal()" style="flex: 1">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registrationForm');
+        const modal = document.getElementById('qrModal');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone })
+                });
+                const data = await response.json();
+                
+                document.getElementById('modalTitle').innerText = `Token #${data.token} Generated`;
+                document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code}`;
+                modal.style.display = 'flex';
+                form.reset();
+                updateStats();
+            } catch (err) {
+                alert('Registration failed');
+            }
+        });
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        async function updateStats() {
+            const res = await fetch('/api/queue');
+            const data = await res.json();
+            document.getElementById('totalCount').innerText = (data.waiting.length + data.completed_count + (data.current ? 1 : 0));
+        }
+
+        setInterval(() => {
+            document.getElementById('currentTime').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        updateStats();
+    </script>
+</body>
+</html>

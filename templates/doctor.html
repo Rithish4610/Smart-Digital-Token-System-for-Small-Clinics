@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - Smart Token System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .queue-item:last-child {
+            border-bottom: none;
+        }
+
+        .current-card {
+            background: linear-gradient(135deg, var(--secondary), #4f46e5);
+            color: white;
+        }
+
+        .current-card h2,
+        .current-card p {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container fade-in">
+        <div class="header">
+            <div>
+                <h1>Doctor's Dashboard</h1>
+                <p style="color: var(--text-light)">Manage your daily consultation queue</p>
+            </div>
+            <button class="btn btn-primary" onclick="callNext()">Call Next Patient</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <!-- Currently Calling -->
+            <div class="card current-card">
+                <p style="opacity: 0.8">Currently Calling</p>
+                <h1 id="currentToken" style="font-size: 3rem; margin: 0.5rem 0;"># --</h1>
+                <h2 id="currentName" style="margin: 0;">No Patient</h2>
+                <div style="margin-top: 2rem;">
+                    <button class="btn" style="background: rgba(255,255,255,0.2); color: white; width: 100%"
+                        onclick="callNext()">Mark Complete & Next</button>
+                </div>
+            </div>
+
+            <!-- Waiting Queue -->
+            <div class="card" style="padding: 0;">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                    <h3>Waiting List (<span id="queueCount">0</span>)</h3>
+                </div>
+                <div id="queueList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function updateDashboard() {
+            try {
+                const res = await fetch('/api/queue');
+                const data = await res.json();
+
+                // Update Current
+                if (data.current) {
+                    document.getElementById('currentToken').innerText = `#${data.current.token}`;
+                    document.getElementById('currentName').innerText = data.current.name;
+                } else {
+                    document.getElementById('currentToken').innerText = '# --';
+                    document.getElementById('currentName').innerText = 'No Patient';
+                }
+
+                // Update List
+                document.getElementById('queueCount').innerText = data.waiting.length;
+                const container = document.getElementById('queueList');
+                container.innerHTML = '';
+
+                data.waiting.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'queue-item fade-in';
+                    div.innerHTML = `
+                        <div>
+                            <span style="font-weight: 700; color: var(--secondary); margin-right: 1rem;">#${p.token}</span>
+                            <span>${p.name}</span>
+                        </div>
+                        <span class="badge badge-waiting">Waiting</span>
+                    `;
+                    container.appendChild(div);
+                });
+
+                if (data.waiting.length === 0) {
+                    container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-light)">No patients waiting</div>';
+                }
+            } catch (err) {
+                console.error('Update failed');
+            }
+        }
+
+        async function callNext() {
+            const res = await fetch('/api/next', { method: 'POST' });
+            updateDashboard();
+        }
+
+        // Poll every 5 seconds for updates
+        setInterval(updateDashboard, 5000);
+        updateDashboard();
+    </script>
+</body>
+
+</html>
