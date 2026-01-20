@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reception - Smart Token System</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
     <div class="container fade-in">
         <div class="header">
@@ -49,7 +51,16 @@
             <div id="qrImageContainer" style="margin: 1.5rem 0;">
                 <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px;">
             </div>
-            <p style="color: var(--text-light); margin-bottom: 1.5rem;">Scan to track your turn live</p>
+            <p style="color: var(--text-light); margin-bottom: 0.5rem;">Scan to track your turn live</p>
+
+            <!-- Added Link for Testing/No-SMS -->
+            <p style="margin-bottom: 1.5rem;">
+                <a id="trackLink" href="#" target="_blank"
+                    style="color: var(--primary-color); text-decoration: none; font-size: 0.9rem;">
+                    Open Tracking Link (Click me)
+                </a>
+            </p>
+
             <div style="display: flex; gap: 1rem;">
                 <button class="btn btn-secondary" onclick="window.print()" style="flex: 1">Print Token</button>
                 <button class="btn btn-primary" onclick="closeModal()" style="flex: 1">Done</button>
@@ -73,9 +84,14 @@
                     body: JSON.stringify({ name, phone })
                 });
                 const data = await response.json();
-                
+
                 document.getElementById('modalTitle').innerText = `Token #${data.token} Generated`;
                 document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code}`;
+
+                // Set the tracking link
+                const link = document.getElementById('trackLink');
+                link.href = data.qr_url;
+
                 modal.style.display = 'flex';
                 form.reset();
                 updateStats();
@@ -101,4 +117,5 @@
         updateStats();
     </script>
 </body>
+
 </html>
