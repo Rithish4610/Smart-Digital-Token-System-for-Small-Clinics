@@ -42,3 +42,4 @@ A modern, low-cost solution for managing patient queues efficiently.
 3. **Patient** scans the QR code to see "People ahead of me" and "Serving now".
 4. **Doctor** clicks "Call Next".
 5. **Public Display** updates instantly and **announces** the token number.
+**PUBLIC**
