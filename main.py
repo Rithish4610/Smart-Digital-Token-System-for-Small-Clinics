@@ -87,11 +87,37 @@ async def display_page(request: Request):
     return templates.TemplateResponse("display.html", {"request": request})
 
 @app.get("/patient/{patient_id}", response_class=HTMLResponse)
-async def patient_page(request: Request, patient_id: int, db: Session = Depends(get_db)):
+async def patient_login_page(request: Request, patient_id: int, db: Session = Depends(get_db)):
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
+    # This page will now be a login screen if not verified
+    return templates.TemplateResponse("patient_login.html", {"request": request, "patient_id": patient_id})
+
+@app.get("/patient/{patient_id}/status", response_class=HTMLResponse)
+async def patient_status_page(request: Request, patient_id: int, token: str = None, db: Session = Depends(get_db)):
+    # Simple token validation (in a real app, use JWT)
+    if not token or token != f"verified_{patient_id}":
+        return templates.TemplateResponse("patient_login.html", {"request": request, "patient_id": patient_id, "error": "Please login first"})
+        
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+        
     return templates.TemplateResponse("patient.html", {"request": request, "patient": patient})
+
+@app.post("/api/verify-patient")
+async def verify_patient(patient_id: int = Form(...), token_number: int = Form(...), last_4_digits: str = Form(...), db: Session = Depends(get_db)):
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    
+    if not patient:
+        return JSONResponse(status_code=404, content={"message": "Patient not found"})
+        
+    # Check token and last 4 digits of phone
+    if patient.token_number == token_number and patient.phone[-4:] == last_4_digits:
+        return {"success": True, "access_token": f"verified_{patient_id}"}
+    else:
+        return JSONResponse(status_code=401, content={"message": "Invalid credentials"})
 
 # --- API Endpoints ---
 @app.post("/api/register")

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification - Smart Token System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            background-color: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card login-card fade-in">
+        <h2 style="text-align: center; margin-bottom: 0.5rem;">Access Queue</h2>
+        <p style="text-align: center; color: var(--text-light); margin-bottom: 2rem;">Please verify your details</p>
+
+        <form id="loginForm">
+            <input type="hidden" id="patientId" value="{{ patient_id }}">
+            <div class="input-group">
+                <label for="tokenNumber">Your Token Number</label>
+                <input type="number" id="tokenNumber" placeholder="e.g. 12" required>
+            </div>
+            <div class="input-group">
+                <label for="last4">Last 4 Digits of Phone</label>
+                <input type="text" id="last4" maxlength="4" placeholder="XXXX" required>
+            </div>
+            <div id="errorMsg" class="error-msg">Invalid token or phone digits. Please try again.</div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Verify & Enter</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const errorMsg = document.getElementById('errorMsg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('patient_id', document.getElementById('patientId').value);
+            formData.append('token_number', document.getElementById('tokenNumber').value);
+            formData.append('last_4_digits', document.getElementById('last4').value);
+
+            try {
+                const response = await fetch('/api/verify-patient', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = `/patient/${document.getElementById('patientId').value}/status?token=${data.access_token}`;
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                alert('Verification failed. Plase check your connection.');
+            }
+        });
+    </script>
+</body>
+
+</html>
