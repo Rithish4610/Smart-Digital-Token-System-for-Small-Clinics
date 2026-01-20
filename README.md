@@ -36,6 +36,26 @@ A modern, low-cost solution for managing patient queues efficiently.
    - **Doctor Dashboard**: `http://localhost:8000/doctor`
    - **Public Display**: `http://localhost:8000/display`
 
+## 📱 How to Enable SMS Notifications
+To send real SMS messages to patients' phones (e.g., to Google Messages), you need a configured SMS gateway.
+
+The code is pre-configured for **Twilio**, which offers a free trial.
+
+1.  **Sign Up:** Go to [Twilio.com](https://www.twilio.com/) and create a free account.
+2.  **Get a Number:** Get a free Trial Phone Number from their dashboard.
+3.  **Get Credentials:** Copy your **Account SID** and **Auth Token**.
+4.  **Configure App:**
+    - Open the `.env` file in this folder.
+    - Replace the placeholder text with your actual keys:
+      ```ini
+      TWILIO_ACCOUNT_SID=AC... (your long ID)
+      TWILIO_AUTH_TOKEN=... (your token)
+      TWILIO_PHONE_NUMBER=+1234567890 (your Twilio number)
+      ```
+5.  **Restart:** Run `python main.py` again.
+
+> **Note:** Without these keys, the system runs in "Mock Mode". It will simulate sending an SMS by printing it to the terminal and providing a "Tracking Link" in the modal.
+
 ## Workflow
 1. **Receptionist** registers the patient.
 2. A **Token & QR Code** is generated.
