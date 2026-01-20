@@ -53,9 +53,18 @@ TWILIO_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE = os.getenv("TWILIO_PHONE_NUMBER")
 
 def send_sms(to_phone: str, message: str):
-    if not all([TWILIO_SID, TWILIO_TOKEN, TWILIO_PHONE]):
-        print(f"SMS MOCK (No Credentials): To {to_phone} -> {message}")
+    # Check for missing OR placeholder credentials
+    if not all([TWILIO_SID, TWILIO_TOKEN, TWILIO_PHONE]) or \
+       TWILIO_SID == "your_sid_here" or \
+       TWILIO_TOKEN == "your_token_here" or \
+       TWILIO_PHONE == "your_twilio_number_here":
+        
+        print(f"------------ MOCK SMS (No Valid Credentials) ------------")
+        print(f"To: {to_phone}")
+        print(f"Message: {message}")
+        print(f"---------------------------------------------------------")
         return
+
     try:
         client = Client(TWILIO_SID, TWILIO_TOKEN)
         client.messages.create(
