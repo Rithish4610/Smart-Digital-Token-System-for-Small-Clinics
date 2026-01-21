@@ -15,7 +15,7 @@ from pydantic import BaseModel
 from twilio.rest import Client
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv();
 
 # --- Database Setup ---
 DB_NAME = "clinic.db"
