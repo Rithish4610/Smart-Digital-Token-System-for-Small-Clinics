@@ -53,28 +53,28 @@ TWILIO_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE = os.getenv("TWILIO_PHONE_NUMBER")
 
 def send_sms(to_phone: str, message: str):
-    # Check for missing OR placeholder credentials
+    # WhatsApp Sandbox: send WhatsApp message instead of SMS
+    # Patient must join sandbox by sending 'join <sandbox-code>' to +14155238886
     if not all([TWILIO_SID, TWILIO_TOKEN, TWILIO_PHONE]) or \
        TWILIO_SID == "your_sid_here" or \
        TWILIO_TOKEN == "your_token_here" or \
        TWILIO_PHONE == "your_twilio_number_here":
-        
-        print(f"------------ MOCK SMS (No Valid Credentials) ------------")
-        print(f"To: {to_phone}")
+        print(f"------------ MOCK WhatsApp (No Valid Credentials) ------------")
+        print(f"To: whatsapp:{to_phone}")
         print(f"Message: {message}")
-        print(f"---------------------------------------------------------")
+        print(f"-------------------------------------------------------------")
         return
 
     try:
         client = Client(TWILIO_SID, TWILIO_TOKEN)
         client.messages.create(
             body=message,
-            from_=TWILIO_PHONE,
-            to=to_phone
+            from_=f"whatsapp:{TWILIO_PHONE}",
+            to=f"whatsapp:{to_phone}"
         )
-        print(f"SMS SENT: To {to_phone}")
+        print(f"WhatsApp SENT: To {to_phone}")
     except Exception as e:
-        print(f"SMS FAILED: {str(e)}")
+        print(f"WhatsApp FAILED: {str(e)}")
 
 # --- FastAPI App ---
 app = FastAPI(title="Smart Clinic Token System")
@@ -168,8 +168,9 @@ async def register_patient(data: PatientCreate, request: Request, conn: sqlite3.
     img.save(img_buffer, format='PNG')
     img_str = base64.b64encode(img_buffer.getvalue()).decode()
     
-    # Send SMS Notification
-    sms_message = f"Hello {data.name}, your token is #{next_token}. Track your turn live: {qr_url}"
+    # Send WhatsApp Notification
+    whatsapp_instructions = ("To receive notifications, send 'join <your-sandbox-code>' to +14155238886 on WhatsApp if you haven't already.")
+    sms_message = f"Hello {data.name}, your token is #{next_token}. Track your turn live: {qr_url}\n{whatsapp_instructions}"
     send_sms(data.phone, sms_message)
     
     return {
