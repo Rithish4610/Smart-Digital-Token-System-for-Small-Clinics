@@ -8,47 +8,123 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
         body {
-            background: var(--bg);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
         }
 
         .patient-card {
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 0.5rem 1.5rem;
-            border-radius: 2rem;
+            padding: 0.75rem 2rem;
+            border-radius: 3rem;
             font-weight: 700;
             margin-bottom: 2rem;
             text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
         .pulse-waiting {
-            background: #dcfce7;
-            color: #166534;
-            animation: pulse 2s infinite;
+            background: linear-gradient(135deg, #06d6a0 0%, #05b589 100%);
+            color: white;
+            animation: pulseGlow 2s infinite;
         }
 
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-            }
+        @keyframes pulseGlow {
 
-            70% {
-                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
-            }
-
+            0%,
             100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.7), 0 8px 24px rgba(0, 0, 0, 0.2);
             }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 20px rgba(6, 214, 160, 0), 0 12px 32px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        .token-display {
+            font-size: 6rem;
+            font-weight: 900;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 1rem 0;
+            text-shadow: 0 4px 12px rgba(94, 96, 206, 0.3);
+            filter: drop-shadow(0 4px 12px rgba(94, 96, 206, 0.3));
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(94, 96, 206, 0.1) 0%, rgba(114, 9, 183, 0.05) 100%);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            margin: 2rem 0;
+            border: 2px solid rgba(94, 96, 206, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-text {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
