@@ -88,7 +88,13 @@ class PatientCreate(BaseModel):
 
 # --- Pages ---
 @app.get("/", response_class=HTMLResponse)
+async def home_page(request: Request):
+    """Home page with navigation to all system features"""
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/reception", response_class=HTMLResponse)
 async def reception_page(request: Request):
+    """Reception dashboard for patient registration"""
     return templates.TemplateResponse("reception.html", {"request": request})
 
 @app.get("/doctor", response_class=HTMLResponse)
