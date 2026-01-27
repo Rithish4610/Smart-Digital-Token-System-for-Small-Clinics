@@ -168,9 +168,8 @@ async def register_patient(data: PatientCreate, request: Request, conn: sqlite3.
     img.save(img_buffer, format='PNG')
     img_str = base64.b64encode(img_buffer.getvalue()).decode()
     
-    # Send WhatsApp Notification
-    whatsapp_instructions = ("To receive notifications, send 'join <your-sandbox-code>' to +14155238886 on WhatsApp if you haven't already.")
-    sms_message = f"Hello {data.name}, your token is #{next_token}. Track your turn live: {qr_url}\n{whatsapp_instructions}"
+    # Send SMS Notification
+    sms_message = f"Hello {data.name}, your token is #{next_token}. Track your turn live: {qr_url}"
     send_sms(data.phone, sms_message)
     
     return {
