@@ -245,6 +245,54 @@ async def get_patient_status(patient_id: int, conn: sqlite3.Connection = Depends
         "current_token": current_calling['token_number'] if current_calling else "N/A"
     }
 
+@app.get("/statistics", response_class=HTMLResponse)
+async def statistics_page(request: Request):
+    """Statistics dashboard page"""
+    return templates.TemplateResponse("statistics.html", {"request": request})
+
+@app.get("/api/statistics")
+async def get_statistics(conn: sqlite3.Connection = Depends(get_db_conn)):
+    """Get comprehensive statistics"""
+    cursor = conn.cursor()
+    
+    # Total patients today
+    cursor.execute("SELECT COUNT(*) as count FROM patients WHERE DATE(created_at) = DATE('now')")
+    total_today = cursor.fetchone()['count']
+    
+    # Completed today
+    cursor.execute("SELECT COUNT(*) as count FROM patients WHERE status = 'completed' AND DATE(created_at) = DATE('now')")
+    completed_today = cursor.fetchone()['count']
+    
+    # Waiting now
+    cursor.execute("SELECT COUNT(*) as count FROM patients WHERE status = 'waiting'")
+    waiting_now = cursor.fetchone()['count']
+    
+    # Average wait time (simplified - 5 mins per patient)
+    avg_wait = waiting_now * 5
+    
+    # Hourly flow for today
+    cursor.execute("""
+        SELECT strftime('%H:00', created_at) as hour, COUNT(*) as count 
+        FROM patients 
+        WHERE DATE(created_at) = DATE('now')
+        GROUP BY hour
+        ORDER BY hour
+    """)
+    hourly_flow = [{"hour": row['hour'], "count": row['count']} for row in cursor.fetchall()]
+    
+    # Peak hours (top 3)
+    peak_hours = sorted(hourly_flow, key=lambda x: x['count'], reverse=True)[:3]
+    peak_hours = [{"time": h['hour'], "count": h['count']} for h in peak_hours]
+    
+    return {
+        "total": total_today,
+        "completed": completed_today,
+        "waiting": waiting_now,
+        "avgWaitTime": avg_wait,
+        "hourlyFlow": hourly_flow,
+        "peakHours": peak_hours
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
