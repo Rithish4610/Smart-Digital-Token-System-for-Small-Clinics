@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Smart Digital Token System for Small Clinics - Efficient queue management solution">
+    <meta name="keywords" content="clinic, queue management, token system, healthcare, digital queue">
+    <meta name="author" content="Smart Clinic Solutions">
+    <title>Smart Token System - Clinic Queue Management</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .home-container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            font-weight: 900;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 3rem;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+        }
+
+        .nav-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .nav-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-desc {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="home-container fade-in">
+        <h1 class="hero-title">🏥 Smart Token System</h1>
+        <p class="hero-subtitle">Efficient Queue Management for Modern Clinics</p>
+
+        <div class="nav-grid">
+            <a href="/reception" class="nav-card scale-in" style="animation-delay: 0.1s;">
+                <div class="nav-icon">📋</div>
+                <div class="nav-title">Reception</div>
+                <div class="nav-desc">Register new patients</div>
+            </a>
+
+            <a href="/doctor" class="nav-card scale-in" style="animation-delay: 0.2s;">
+                <div class="nav-icon">👨‍⚕️</div>
+                <div class="nav-title">Doctor</div>
+                <div class="nav-desc">Manage consultations</div>
+            </a>
+
+            <a href="/display" class="nav-card scale-in" style="animation-delay: 0.3s;">
+                <div class="nav-icon">📺</div>
+                <div class="nav-title">Display</div>
+                <div class="nav-desc">Public queue screen</div>
+            </a>
+
+            <a href="/patient/1/login" class="nav-card scale-in" style="animation-delay: 0.4s;">
+                <div class="nav-icon">🎫</div>
+                <div class="nav-title">Patient</div>
+                <div class="nav-desc">Track your token</div>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
