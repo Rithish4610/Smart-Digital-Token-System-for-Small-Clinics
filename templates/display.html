@@ -133,13 +133,15 @@
 <body>
     <div class="grid-display">
         <div class="main-display">
-            <h2 style="color: var(--text-light); text-transform: uppercase; letter-spacing: 0.2rem;">Currently Serving
-            </h2>
+            <h2 class="status-label">🔊 Currently Serving</h2>
             <div id="currentToken" class="token-large">--</div>
-            <h1 id="currentName" style="font-size: 3rem; margin-top: 2rem;">Please Wait</h1>
+            <h1 id="currentName"
+                style="font-size: 3.5rem; margin-top: 2rem; font-weight: 700; text-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);">
+                Please Wait</h1>
         </div>
         <div class="side-display">
-            <h2 style="color: var(--text-light); margin-bottom: 2rem;">Upcoming Tokens</h2>
+            <h2 style="color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700;">📋
+                Upcoming Tokens</h2>
             <div id="upcomingList">
                 <!-- Upcoming tokens -->
             </div>
