@@ -1,0 +1,185 @@
+/* Print-specific styles for token receipts */
+
+@media print {
+
+    /* Hide everything except the token */
+    body * {
+        visibility: hidden;
+    }
+
+    .print-token,
+    .print-token * {
+        visibility: visible;
+    }
+
+    .print-token {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 2rem;
+    }
+
+    /* Hide UI elements */
+    .btn,
+    .header,
+    nav,
+    .sound-toggle,
+    .fab {
+        display: none !important;
+    }
+
+    /* Token receipt styling */
+    .token-receipt {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 2rem;
+        border: 2px dashed #333;
+        font-family: 'Courier New', monospace;
+    }
+
+    .receipt-header {
+        text-align: center;
+        border-bottom: 2px solid #333;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .receipt-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .receipt-token {
+        font-size: 4rem;
+        font-weight: bold;
+        text-align: center;
+        margin: 2rem 0;
+        border: 3px solid #333;
+        padding: 1rem;
+    }
+
+    .receipt-info {
+        margin: 1rem 0;
+        line-height: 1.8;
+    }
+
+    .receipt-qr {
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+
+    .receipt-footer {
+        text-align: center;
+        border-top: 2px solid #333;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Remove colors for print */
+    * {
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    /* Keep QR code visible */
+    img {
+        filter: none !important;
+    }
+}
+
+/* Print button styling */
+.print-btn {
+    background: linear-gradient(135deg, #5e60ce 0%, #7209b7 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(94, 96, 206, 0.3);
+}
+
+.print-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(94, 96, 206, 0.4);
+}
+
+.print-btn:active {
+    transform: translateY(0);
+}
+
+/* Token receipt preview (on screen) */
+.token-receipt-preview {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border: 2px dashed var(--text-light);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+}
+
+.receipt-preview-header {
+    text-align: center;
+    border-bottom: 2px solid var(--text-light);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.receipt-preview-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.receipt-preview-subtitle {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.receipt-preview-token {
+    font-size: 4rem;
+    font-weight: 900;
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(94, 96, 206, 0.1) 0%, rgba(6, 214, 160, 0.1) 100%);
+    border-radius: 1rem;
+    color: var(--secondary);
+}
+
+.receipt-preview-info {
+    margin: 1rem 0;
+    line-height: 2;
+    color: var(--text);
+}
+
+.receipt-preview-info strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.receipt-preview-qr {
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 0.75rem;
+}
+
+.receipt-preview-footer {
+    text-align: center;
+    border-top: 2px solid var(--text-light);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
