@@ -133,31 +133,37 @@
     <div class="card patient-card fade-in">
         <div id="statusBadge" class="status-badge pulse-waiting">Waiting</div>
 
-        <p style="color: var(--text-light); font-weight: 500;">Hello, {{ patient.name }}</p>
-        <h1 style="font-size: 1.2rem; margin-top: 0.5rem;">Your Token Number</h1>
-        <div style="font-size: 5rem; font-weight: 800; color: var(--secondary); margin: 0.5rem 0;">#{{
-            patient.token_number }}</div>
+        <p class="welcome-text">Hello, {{ patient.name }}</p>
+        <h1 class="section-title">Your Token Number</h1>
+        <div class="token-display">#{{ patient.token_number }}</div>
 
-        <div style="background: #f1f5f9; padding: 2rem; border-radius: 1rem; margin: 2rem 0;">
-            <div style="display: flex; justify-content: space-around;">
-                <div>
-                    <p style="font-size: 0.8rem; color: var(--text-light)">Serving Now</p>
-                    <div id="servingNow" style="font-size: 1.5rem; font-weight: 700;">--</div>
+        <div class="info-box">
+            <div style="display: flex; justify-content: space-around; gap: 2rem;">
+                <div class="stat-item">
+                    <p
+                        style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-bottom: 0.5rem; font-weight: 600;">
+                        Serving Now</p>
+                    <div id="servingNow" class="stat-value">--</div>
                 </div>
-                <div style="width: 1px; background: #cbd5e1;"></div>
-                <div>
-                    <p style="font-size: 0.8rem; color: var(--text-light)">People Ahead</p>
-                    <div id="peopleAhead" style="font-size: 1.5rem; font-weight: 700;">--</div>
+                <div style="width: 2px; background: rgba(94, 96, 206, 0.3);"></div>
+                <div class="stat-item">
+                    <p
+                        style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-bottom: 0.5rem; font-weight: 600;">
+                        People Ahead</p>
+                    <div id="peopleAhead" class="stat-value">--</div>
                 </div>
             </div>
         </div>
 
-        <p id="etaText" style="color: var(--text-light); font-size: 0.9rem;">
-            Approx. wait time: <span style="color: var(--text); font-weight: 600;">Calculating...</span>
+        <p id="etaText"
+            style="color: white; font-size: 1rem; font-weight: 500; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">
+            Approx. wait time: <span style="font-weight: 700;">Calculating...</span>
         </p>
 
-        <div style="margin-top: 2rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
-            <p style="font-size: 0.8rem; color: var(--text-light)">Auto-updates every 10 seconds</p>
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid rgba(255, 255, 255, 0.2);">
+            <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); font-weight: 500;">
+                <span class="status-indicator status-active"></span>Auto-updates every 10 seconds
+            </p>
         </div>
     </div>
 
@@ -175,21 +181,21 @@
                 const badge = document.getElementById('statusBadge');
                 if (data.status === 'calling') {
                     badge.innerText = "IT'S YOUR TURN!";
-                    badge.style.background = '#10b981';
+                    badge.style.background = 'linear-gradient(135deg, #ff6b9d 0%, #f72585 100%)';
                     badge.style.color = 'white';
                     if (window.Notification && Notification.permission === "granted") {
                         new Notification("Clinic Update", { body: "It's your turn! Please proceed to the room." });
                     }
                 } else if (data.status === 'completed') {
                     badge.innerText = "VISIT COMPLETED";
-                    badge.style.background = '#64748b';
-                    badge.style.color = 'white';
+                    badge.style.background = 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)';
+                    badge.style.color = '#3730a3';
                     badge.classList.remove('pulse-waiting');
                 }
 
                 // Estimated time (5 mins per patient mock)
                 const waitTime = data.people_ahead * 5;
-                document.getElementById('etaText').innerHTML = `Approx. wait time: <span style="color: var(--text); font-weight: 600;">~${waitTime} mins</span>`;
+                document.getElementById('etaText').innerHTML = `Approx. wait time: <span style="font-weight: 700;">~${waitTime} mins</span>`;
 
             } catch (err) {
                 console.error("Status update failed");
