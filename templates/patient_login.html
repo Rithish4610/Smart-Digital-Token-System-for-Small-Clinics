@@ -8,46 +8,92 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
         body {
-            background-color: var(--bg);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
         }
 
         .login-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
+            position: relative;
+            z-index: 1;
         }
 
         .error-msg {
-            color: var(--danger);
-            font-size: 0.875rem;
+            color: white;
+            background: linear-gradient(135deg, #ef476f 0%, #d62828 100%);
+            font-size: 0.9rem;
             margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
             text-align: center;
             display: none;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(239, 71, 111, 0.3);
+        }
+
+        .page-title {
+            color: white;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 
 <body>
-    <div class="card login-card fade-in">
-        <h2 style="text-align: center; margin-bottom: 0.5rem;">Access Queue</h2>
-        <p style="text-align: center; color: var(--text-light); margin-bottom: 2rem;">Please verify your details</p>
+    <div class="card login-card scale-in">
+        <h2 class="page-title">🔐 Access Queue</h2>
+        <p class="page-subtitle">Please verify your details</p>
 
         <form id="loginForm">
             <input type="hidden" id="patientId" value="{{ patient_id }}">
             <div class="input-group">
-                <label for="tokenNumber">Your Token Number</label>
+                <label for="tokenNumber">🎫 Your Token Number</label>
                 <input type="number" id="tokenNumber" placeholder="e.g. 12" required>
             </div>
             <div class="input-group">
-                <label for="last4">Last 4 Digits of Phone</label>
+                <label for="last4">📱 Last 4 Digits of Phone</label>
                 <input type="text" id="last4" maxlength="4" placeholder="XXXX" required>
             </div>
-            <div id="errorMsg" class="error-msg">Invalid token or phone digits. Please try again.</div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Verify & Enter</button>
+            <div id="errorMsg" class="error-msg">❌ Invalid token or phone digits. Please try again.</div>
+            <button type="submit" class="btn btn-primary glow-on-hover"
+                style="width: 100%; margin-top: 1.5rem; font-size: 1.1rem;">✅ Verify & Enter</button>
         </form>
     </div>
 
