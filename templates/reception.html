@@ -12,34 +12,48 @@
     <div class="container fade-in">
         <div class="header">
             <div>
-                <h1>Clinic Reception</h1>
-                <p style="color: var(--text-light)">Register new patients and issue tokens</p>
+                <h1>🏥 Clinic Reception</h1>
+                <p style="color: var(--text-light); font-size: 1.05rem;">Register new patients and issue tokens</p>
             </div>
-            <div class="btn btn-secondary" id="currentTime">00:00:00</div>
+            <div class="btn btn-secondary glow-on-hover" id="currentTime" style="font-weight: 700; font-size: 1.1rem;">
+                00:00:00</div>
         </div>
 
-        <div class="card">
+        <div class="card scale-in" style="animation-delay: 0.1s;">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem;">📋 New Patient Registration</h2>
             <form id="registrationForm">
                 <div class="input-group">
-                    <label for="name">Patient Name</label>
-                    <input type="text" id="name" placeholder="Enter patient name" required>
+                    <label for="name">👤 Patient Name</label>
+                    <input type="text" id="name" placeholder="Enter full name" required>
                 </div>
                 <div class="input-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" placeholder="Enter phone number" required>
+                    <label for="phone">📱 Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter 10-digit phone number" required>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%">Register & Generate Token</button>
+                <button type="submit" class="btn btn-primary glow-on-hover" style="width: 100%; font-size: 1.1rem;">✨
+                    Register & Generate Token</button>
             </form>
         </div>
 
-        <div style="margin-top: 2rem;">
-            <h3>Today's Summary</h3>
-            <div id="summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-                <div class="card" style="text-align: center; padding: 1rem;">
-                    <div style="font-size: 0.8rem; color: var(--text-light)">Total Registered</div>
-                    <div id="totalCount" style="font-size: 1.5rem; font-weight: 700">0</div>
+        <div style="margin-top: 2.5rem;">
+            <h3 style="margin-bottom: 1.5rem;">📊 Today's Summary</h3>
+            <div id="summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                <div class="card slide-in-left" style="text-align: center; padding: 1.5rem; animation-delay: 0.2s;">
+                    <div style="font-size: 0.85rem; color: var(--text-light); font-weight: 600; margin-bottom: 0.5rem;">
+                        Total Registered</div>
+                    <div id="totalCount" class="text-gradient" style="font-size: 2.5rem; font-weight: 900;">0</div>
                 </div>
-                <!-- More stats can go here -->
+                <div class="card slide-in-left" style="text-align: center; padding: 1.5rem; animation-delay: 0.3s;">
+                    <div style="font-size: 0.85rem; color: var(--text-light); font-weight: 600; margin-bottom: 0.5rem;">
+                        Queue Status</div>
+                    <div class="text-gradient" style="font-size: 2.5rem; font-weight: 900;">✓</div>
+                </div>
+                <div class="card slide-in-left" style="text-align: center; padding: 1.5rem; animation-delay: 0.4s;">
+                    <div style="font-size: 0.85rem; color: var(--text-light); font-weight: 600; margin-bottom: 0.5rem;">
+                        System Active</div>
+                    <div style="font-size: 2.5rem;"><span class="status-indicator status-active"
+                            style="width: 20px; height: 20px;"></span></div>
+                </div>
             </div>
         </div>
     </div>
