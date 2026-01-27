@@ -8,49 +8,124 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
         body {
-            background-color: var(--text);
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b4e 100%);
             color: white;
             overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(94, 96, 206, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(6, 214, 160, 0.15) 0%, transparent 50%);
+            animation: pulseBackground 8s ease-in-out infinite;
+        }
+
+        @keyframes pulseBackground {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         .grid-display {
             display: grid;
             grid-template-columns: 1.5fr 1fr;
             height: 100vh;
-            gap: 2px;
-            background: #334155;
+            gap: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 1;
         }
 
         .main-display {
-            background: var(--text);
+            background: linear-gradient(135deg, rgba(26, 29, 41, 0.95) 0%, rgba(45, 27, 78, 0.95) 100%);
+            backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 4rem;
+            position: relative;
         }
 
         .side-display {
-            background: #0f172a;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
             padding: 2rem;
+            overflow-y: auto;
         }
 
         .token-large {
-            font-size: 15rem;
-            font-weight: 800;
+            font-size: 18rem;
+            font-weight: 900;
             line-height: 1;
-            color: var(--primary);
-            text-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, #06d6a0 0%, #7ff5d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 80px rgba(6, 214, 160, 0.5);
+            filter: drop-shadow(0 0 40px rgba(6, 214, 160, 0.6));
+            animation: tokenPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes tokenPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .upcoming-item {
             display: flex;
             justify-content: space-between;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             padding: 1.5rem;
             border-radius: 1rem;
             margin-bottom: 1rem;
             font-size: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .upcoming-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(5px);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .status-label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 700;
+            margin-bottom: 2rem;
         }
     </style>
 </head>
