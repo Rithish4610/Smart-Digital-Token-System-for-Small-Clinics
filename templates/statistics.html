@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Dashboard - Smart Token System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-container {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        .progress-ring {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container fade-in">
+        <div class="header">
+            <div>
+                <h1>📊 Statistics Dashboard</h1>
+                <p style="color: var(--text-light); font-size: 1.05rem;">Real-time analytics and insights</p>
+            </div>
+            <a href="/" class="btn btn-secondary">🏠 Home</a>
+        </div>
+
+        <div class="time-filter">
+            <button class="filter-btn active" onclick="filterStats('today')">Today</button>
+            <button class="filter-btn" onclick="filterStats('week')">This Week</button>
+            <button class="filter-btn" onclick="filterStats('month')">This Month</button>
+            <button class="filter-btn" onclick="filterStats('all')">All Time</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card scale-in" style="animation-delay: 0.1s;">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Total Patients</div>
+                <div class="stat-value" id="totalPatients">0</div>
+            </div>
+
+            <div class="stat-card scale-in" style="animation-delay: 0.2s;">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="completedCount">0</div>
+            </div>
+
+            <div class="stat-card scale-in" style="animation-delay: 0.3s;">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-label">Waiting</div>
+                <div class="stat-value" id="waitingCount">0</div>
+            </div>
+
+            <div class="stat-card scale-in" style="animation-delay: 0.4s;">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-label">Avg Wait Time</div>
+                <div class="stat-value" id="avgWaitTime">0<span style="font-size: 1.5rem;">min</span></div>
+            </div>
+        </div>
+
+        <div class="chart-container fade-in" style="animation-delay: 0.5s;">
+            <h3 style="margin-bottom: 1.5rem;">📈 Patient Flow Today</h3>
+            <div id="flowChart"
+                style="height: 300px; display: flex; align-items: flex-end; gap: 1rem; justify-content: space-around;">
+                <!-- Chart will be generated here -->
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div class="chart-container fade-in" style="animation-delay: 0.6s;">
+                <h3 style="margin-bottom: 1.5rem;">🕐 Peak Hours</h3>
+                <div id="peakHours">
+                    <p style="color: var(--text-light);">Loading data...</p>
+                </div>
+            </div>
+
+            <div class="chart-container fade-in" style="animation-delay: 0.7s;">
+                <h3 style="margin-bottom: 1.5rem;">📊 Status Distribution</h3>
+                <div id="statusDistribution"
+                    style="display: flex; justify-content: center; align-items: center; min-height: 200px;">
+                    <div class="progress-ring">
+                        <svg width="150" height="150">
+                            <circle cx="75" cy="75" r="60" fill="none" stroke="#e0e7ff" stroke-width="15" />
+                            <circle id="progressCircle" cx="75" cy="75" r="60" fill="none" stroke="url(#gradient)"
+                                stroke-width="15" stroke-dasharray="377" stroke-dashoffset="94"
+                                transform="rotate(-90 75 75)" />
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#06d6a0;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#05b589;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+                <p style="text-align: center; color: var(--text-light); margin-top: 1rem;">
+                    <span id="completionRate"
+                        style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">0%</span> Completion Rate
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let currentFilter = 'today';
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/statistics');
+                const data = await response.json();
+
+                document.getElementById('totalPatients').textContent = data.total;
+                document.getElementById('completedCount').textContent = data.completed;
+                document.getElementById('waitingCount').textContent = data.waiting;
+                document.getElementById('avgWaitTime').innerHTML = `${data.avgWaitTime}<span style="font-size: 1.5rem;">min</span>`;
+
+                // Update completion rate
+                const rate = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
+                document.getElementById('completionRate').textContent = `${rate}%`;
+
+                // Update progress circle
+                const circumference = 377;
+                const offset = circumference - (circumference * rate / 100);
+                document.getElementById('progressCircle').style.strokeDashoffset = offset;
+
+                // Generate flow chart
+                generateFlowChart(data.hourlyFlow || []);
+
+                // Show peak hours
+                displayPeakHours(data.peakHours || []);
+            } catch (error) {
+                console.error('Failed to load statistics:', error);
+            }
+        }
+
+        function generateFlowChart(hourlyData) {
+            const chart = document.getElementById('flowChart');
+            chart.innerHTML = '';
+
+            if (hourlyData.length === 0) {
+                chart.innerHTML = '<p style="color: var(--text-light); margin: auto;">No data available</p>';
+                return;
+            }
+
+            const maxValue = Math.max(...hourlyData.map(h => h.count));
+
+            hourlyData.forEach((item, index) => {
+                const height = maxValue > 0 ? (item.count / maxValue) * 250 : 0;
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+                    flex: 1;
+                    height: ${height}px;
+                    background: linear-gradient(to top, #06d6a0, #7ff5d4);
+                    border-radius: 0.5rem 0.5rem 0 0;
+                    position: relative;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    animation: slideUp 0.5s ease-out ${index * 0.05}s both;
+                `;
+
+                bar.innerHTML = `
+                    <div style="position: absolute; top: -2rem; left: 50%; transform: translateX(-50%); font-weight: 700; color: var(--primary);">${item.count}</div>
+                    <div style="position: absolute; bottom: -2rem; left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: var(--text-light); white-space: nowrap;">${item.hour}</div>
+                `;
+
+                bar.addEventListener('mouseenter', () => {
+                    bar.style.transform = 'scaleY(1.05)';
+                    bar.style.filter = 'brightness(1.1)';
+                });
+
+                bar.addEventListener('mouseleave', () => {
+                    bar.style.transform = 'scaleY(1)';
+                    bar.style.filter = 'brightness(1)';
+                });
+
+                chart.appendChild(bar);
+            });
+        }
+
+        function displayPeakHours(peakHours) {
+            const container = document.getElementById('peakHours');
+
+            if (peakHours.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light);">No data available</p>';
+                return;
+            }
+
+            container.innerHTML = peakHours.map((hour, index) => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(94, 96, 206, 0.05); border-radius: 0.75rem; margin-bottom: 0.75rem; animation: fadeIn 0.5s ease-out ${index * 0.1}s both;">
+                    <span style="font-weight: 600;">${hour.time}</span>
+                    <span class="badge badge-calling">${hour.count} patients</span>
+                </div>
+            `).join('');
+        }
+
+        function filterStats(period) {
+            currentFilter = period;
+
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Reload stats with filter
+            loadStats();
+        }
+
+        // Add animation keyframe
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from {
+                    height: 0;
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Load stats on page load
+        loadStats();
+
+        // Refresh every 30 seconds
+        setInterval(loadStats, 30000);
+    </script>
+</body>
+
+</html>
