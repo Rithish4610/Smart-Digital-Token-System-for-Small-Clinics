@@ -1,24 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* Vibrant Color Palette */
-    --primary: #06d6a0;
-    --primary-dark: #05b589;
-    --primary-light: #7ff5d4;
-    --secondary: #5e60ce;
-    --secondary-dark: #4a4bb8;
-    --accent: #ff6b9d;
-    --accent-dark: #ff4d88;
-
-    /* Gradient Colors */
-    --gradient-primary: linear-gradient(135deg, #06d6a0 0%, #05b589 100%);
-    --gradient-secondary: linear-gradient(135deg, #5e60ce 0%, #7209b7 100%);
-    --gradient-accent: linear-gradient(135deg, #ff6b9d 0%, #f72585 100%);
-    --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-
-    /* Background & Surface */
-    --bg: #f0f4f8;
     --bg-dark: #1a1d29;
     --surface: #ffffff;
     --surface-glass: rgba(255, 255, 255, 0.7);
