@@ -404,6 +404,10 @@
                     document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code}`;
                     document.getElementById('trackLink').href = data.qr_url;
 
+                    // WhatsApp Logic (Free Alternative)
+                    const waMsg = `Hello ${name}, your Token is #${data.token}. Track live: ${data.qr_url}`;
+                    document.getElementById('whatsappLink').href = `https://wa.me/${phone}?text=${encodeURIComponent(waMsg)}`;
+
                     modal.style.display = 'flex';
                     form.reset();
                     updateReceptionStats();
