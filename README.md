@@ -57,22 +57,56 @@ Open your browser and navigate to:
 
 ## 📱 SMS Notifications Setup (Optional)
 
-To send real SMS messages to patients' phones, configure Twilio:
+To send real SMS messages to patients when they register, you can configure Twilio integration.
 
-1. **Sign Up**: Go to [Twilio.com](https://www.twilio.com/) and create a free account
-2. **Get a Number**: Obtain a free Trial Phone Number from the dashboard
-3. **Get Credentials**: Copy your **Account SID** and **Auth Token**
-4. **Configure App**: 
-   - Create a `.env` file in the project root
-   - Add your credentials:
-     ```ini
-     TWILIO_ACCOUNT_SID=AC... (your account SID)
-     TWILIO_AUTH_TOKEN=... (your auth token)
-     TWILIO_PHONE_NUMBER=+1234567890 (your Twilio number)
-     ```
-5. **Restart**: Run `python main.py` again
+### Quick Setup (Recommended)
 
-> **Note:** Without these keys, the system runs in "Mock Mode" - it simulates SMS by printing to the terminal and providing a tracking link in the modal.
+Run the interactive setup script:
+
+```bash
+python quick_setup_twilio.py
+```
+
+This will guide you through:
+- Entering your Twilio credentials
+- Creating the `.env` file automatically
+- Validating your configuration
+
+### Manual Setup
+
+1. **Get Twilio Account**: Sign up at [twilio.com/try-twilio](https://www.twilio.com/try-twilio)
+2. **Get Credentials**: From your Twilio Console Dashboard, copy:
+   - Account SID (starts with `AC`)
+   - Auth Token (32 characters)
+   - Phone Number (with country code, e.g., `+15551234567`)
+3. **Configure App**: Create `.env` file (or copy from `.env.example`)
+   ```ini
+   TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   TWILIO_AUTH_TOKEN=your_auth_token_here
+   TWILIO_PHONE_NUMBER=+15551234567
+   ```
+4. **Test Configuration**: Run diagnostic tool
+   ```bash
+   python diagnose_twilio.py
+   ```
+5. **Restart Application**: 
+   ```bash
+   python main.py
+   ```
+
+### 📚 Detailed Guide
+
+For step-by-step instructions with screenshots, troubleshooting, and pricing info, see:
+**[TWILIO_SETUP_GUIDE.md](TWILIO_SETUP_GUIDE.md)**
+
+### Important Notes
+
+- ⚠️ **Trial Account**: Can only send SMS to verified phone numbers
+- 💰 **Free Credit**: $15.50 (approx. 200-600 SMS)
+- 🌍 **Phone Format**: Must include country code (e.g., `+919876543210` for India)
+- 🔒 **Mock Mode**: Without credentials, system prints SMS to terminal (for testing)
+
+> **Tip:** Run `python diagnose_twilio.py` anytime to check your SMS configuration!
 
 ## 🔄 Workflow
 

@@ -4,94 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Smart Digital Token System for Small Clinics - Efficient queue management solution">
-    <meta name="keywords" content="clinic, queue management, token system, healthcare, digital queue">
-    <meta name="author" content="Smart Clinic Solutions">
-    <title>Smart Token System - Clinic Queue Management</title>
+    <title>Clinic Portal - Smart Token System</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        body {
+        /* Role Selection Styling */
+        #role-selector {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow: hidden;
+            z-index: 2000;
         }
 
-        body::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: moveBackground 20s linear infinite;
-        }
-
-        @keyframes moveBackground {
-            0% {
-                transform: translate(0, 0);
-            }
-
-            100% {
-                transform: translate(50px, 50px);
-            }
-        }
-
-        .home-container {
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-title {
-            font-size: 4rem;
-            color: white;
-            margin-bottom: 1rem;
-            text-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            font-weight: 900;
-        }
-
-        .hero-subtitle {
-            font-size: 1.5rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 3rem;
-            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .role-cards {
+            display: flex;
             gap: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .nav-card {
+        .role-card {
             background: rgba(255, 255, 255, 0.95);
-            padding: 3rem 2rem;
+            padding: 3rem;
             border-radius: 2rem;
-            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 250px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            /* For link compatibility */
+            color: inherit;
         }
 
-        .nav-card:hover {
-            transform: translateY(-12px) scale(1.02);
+        .role-card:hover {
+            transform: translateY(-10px) scale(1.05);
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
         }
 
-        .nav-icon {
+        .role-icon {
             font-size: 4rem;
             margin-bottom: 1rem;
         }
 
-        .nav-title {
-            font-size: 1.8rem;
+        .role-title {
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             background: var(--gradient-secondary);
@@ -100,50 +64,366 @@
             background-clip: text;
         }
 
-        .nav-desc {
+        /* Specific Views */
+        .dashboard-view {
+            display: none;
+            padding-top: 2rem;
+            min-height: 100vh;
+        }
+
+        .dashboard-view.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+
+        /* Top Bar for Logged In View */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+            align-items: center;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
             color: var(--text-light);
-            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--primary);
+        }
+
+        /* Doctor Dashboard Specifics */
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(94, 96, 206, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .queue-item:hover {
+            background: linear-gradient(135deg, rgba(94, 96, 206, 0.05) 0%, rgba(6, 214, 160, 0.05) 100%);
+            transform: translateX(5px);
+        }
+
+        .current-card {
+            background: linear-gradient(135deg, #5e60ce 0%, #7209b7 100%);
+            color: white;
+            box-shadow: 0 12px 32px rgba(94, 96, 206, 0.4);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .current-card h1,
+        .current-card h2,
+        .current-card p {
+            color: white;
+        }
+
+        .token-number {
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
     </style>
 </head>
 
 <body>
-    <div class="home-container fade-in">
-        <h1 class="hero-title">🏥 Smart Token System</h1>
-        <p class="hero-subtitle">Efficient Queue Management for Modern Clinics</p>
 
-        <div class="nav-grid">
-            <a href="/reception" class="nav-card scale-in" style="animation-delay: 0.1s;">
-                <div class="nav-icon">📋</div>
-                <div class="nav-title">Reception</div>
-                <div class="nav-desc">Register new patients</div>
+    <!-- ROLE SELECTOR -->
+    <div id="role-selector">
+        <h1 class="hero-title" style="font-size: 3rem; color: white; margin-bottom: 1rem;">🏥 Clinic Portal</h1>
+        <p style="color: rgba(255,255,255,0.9); margin-bottom: 3rem; font-size: 1.2rem;">Select your role to access the
+            system</p>
+
+        <div class="role-cards">
+            <div class="role-card" onclick="enterPortal('reception')">
+                <div class="role-icon">📋</div>
+                <div class="role-title">Receptionist</div>
+                <div style="color: var(--text-light)">Register & Issue Tokens</div>
+            </div>
+
+            <div class="role-card" onclick="enterPortal('doctor')">
+                <div class="role-icon">👨‍⚕️</div>
+                <div class="role-title">Doctor</div>
+                <div style="color: var(--text-light)">Manage Consultations</div>
+            </div>
+
+            <a href="/display" target="_blank" class="role-card">
+                <div class="role-icon">📺</div>
+                <div class="role-title">Display Screen</div>
+                <div style="color: var(--text-light)">Open Public View (New Tab)</div>
             </a>
 
-            <a href="/doctor" class="nav-card scale-in" style="animation-delay: 0.2s;">
-                <div class="nav-icon">👨‍⚕️</div>
-                <div class="nav-title">Doctor</div>
-                <div class="nav-desc">Manage consultations</div>
-            </a>
-
-            <a href="/display" class="nav-card scale-in" style="animation-delay: 0.3s;">
-                <div class="nav-icon">📺</div>
-                <div class="nav-title">Display</div>
-                <div class="nav-desc">Public queue screen</div>
-            </a>
-
-            <a href="/patient/1/login" class="nav-card scale-in" style="animation-delay: 0.4s;">
-                <div class="nav-icon">🎫</div>
-                <div class="nav-title">Patient</div>
-                <div class="nav-desc">Track your token</div>
-            </a>
-
-            <a href="/statistics" class="nav-card scale-in" style="animation-delay: 0.5s; grid-column: span 2;">
-                <div class="nav-icon">📊</div>
-                <div class="nav-title">Statistics</div>
-                <div class="nav-desc">View analytics & insights</div>
+            <a href="/statistics" class="role-card">
+                <div class="role-icon">📊</div>
+                <div class="role-title">Statistics</div>
+                <div style="color: var(--text-light)">View Analytics</div>
             </a>
         </div>
     </div>
+
+    <!-- MAIN PORTAL CONTAINER -->
+    <div id="portal-container" style="display: none;">
+        <nav class="top-bar">
+            <div style="font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span id="portal-title">Portal</span>
+            </div>
+            <button class="back-btn" onclick="exitPortal()">
+                ← Switch Role
+            </button>
+        </nav>
+
+        <!-- RECEPTION VIEW -->
+        <div id="reception-view" class="dashboard-view container">
+            <div class="header">
+                <div>
+                    <h1>🏥 Clinic Reception</h1>
+                    <p style="color: var(--text-light);">Register new patients and issue tokens</p>
+                </div>
+                <div class="btn btn-secondary glow-on-hover" id="currentTime" style="font-weight: 700;">00:00:00</div>
+            </div>
+
+            <div class="card fade-in">
+                <h2 style="margin-bottom: 1.5rem;">📋 New Patient Registration</h2>
+                <form id="registrationForm">
+                    <div class="input-group">
+                        <label for="p_name">👤 Patient Name</label>
+                        <input type="text" id="p_name" placeholder="Enter full name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="p_phone">📱 Phone Number</label>
+                        <input type="tel" id="p_phone" placeholder="Enter 10-digit phone number" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary glow-on-hover" style="width: 100%;">
+                        ✨ Register & Generate Token
+                    </button>
+                </form>
+            </div>
+
+            <div style="margin-top: 2.5rem;">
+                <h3 style="margin-bottom: 1.5rem;">📊 Today's Summary</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card" style="text-align: center; padding: 1.5rem;">
+                        <div style="font-size: 0.85rem; color: var(--text-light); font-weight: 600;">Total Registered
+                        </div>
+                        <div id="totalCount" class="text-gradient" style="font-size: 2.5rem; font-weight: 900;">0</div>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 1.5rem;">
+                        <div style="font-size: 0.85rem; color: var(--text-light); font-weight: 600;">System Status</div>
+                        <div style="font-size: 1.5rem; margin-top: 0.5rem;"><span
+                                class="status-indicator status-active"></span> Online</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DOCTOR VIEW -->
+        <div id="doctor-view" class="dashboard-view container">
+            <div class="header">
+                <div>
+                    <h1>👨‍⚕️ Doctor's Dashboard</h1>
+                    <p style="color: var(--text-light);">Manage your consultation queue</p>
+                </div>
+                <button class="btn btn-primary glow-on-hover" onclick="callNext()">📞 Call Next Patient</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                <!-- Currently Calling -->
+                <div class="current-card fade-in">
+                    <p style="opacity: 0.9; font-weight: 600; font-size: 0.9rem; text-transform: uppercase;">Currently
+                        Calling</p>
+                    <h1 id="doc-currentToken" style="font-size: 4rem; margin: 1rem 0; font-weight: 900;">--</h1>
+                    <h2 id="doc-currentName" style="margin: 0; font-size: 1.8rem;">No Patient</h2>
+                    <div style="margin-top: 2rem;">
+                        <button class="btn"
+                            style="background: rgba(255,255,255,0.25); color: white; width: 100%; backdrop-filter: blur(10px);"
+                            onclick="callNext()">
+                            ✅ Mark Complete & Next
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Waiting Queue -->
+                <div class="card fade-in" style="padding: 0;">
+                    <div
+                        style="padding: 1.5rem; border-bottom: 1px solid rgba(94, 96, 206, 0.1); background: rgba(94, 96, 206, 0.05);">
+                        <h3 style="margin: 0;">📋 Waiting List (<span id="doc-queueCount">0</span>)</h3>
+                    </div>
+                    <div id="doc-queueList" style="max-height: 500px; overflow-y: auto;">
+                        <!-- Dynamic list -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Modal (Shared) -->
+    <div id="qrModal">
+        <div class="modal-content fade-in">
+            <h2 id="modalTitle">Token #12 Generated</h2>
+            <div id="qrImageContainer" style="margin: 1.5rem 0;">
+                <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px;">
+            </div>
+            <p style="margin-bottom: 1.5rem;">
+                <a id="trackLink" href="#" target="_blank" style="color: var(--primary); text-decoration: none;">Track
+                    Link</a>
+            </p>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-secondary" onclick="window.print()" style="flex: 1">Print</button>
+                <button class="btn btn-primary" onclick="closeModal()" style="flex: 1">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        let updateInterval;
+        const form = document.getElementById('registrationForm');
+        const modal = document.getElementById('qrModal');
+
+        // --- NAVIGATION ---
+        function enterPortal(role) {
+            document.getElementById('role-selector').style.display = 'none';
+            document.getElementById('portal-container').style.display = 'block';
+
+            // Hide all views first
+            document.querySelectorAll('.dashboard-view').forEach(el => el.classList.remove('active'));
+
+            if (role === 'reception') {
+                document.getElementById('reception-view').classList.add('active');
+                document.getElementById('portal-title').innerHTML = '📋 Reception Portal';
+                startReceptionUpdates();
+            } else if (role === 'doctor') {
+                document.getElementById('doctor-view').classList.add('active');
+                document.getElementById('portal-title').innerHTML = '👨‍⚕️ Doctor Portal';
+                startDoctorUpdates();
+            }
+        }
+
+        function exitPortal() {
+            document.getElementById('role-selector').style.display = 'flex';
+            document.getElementById('portal-container').style.display = 'none';
+            clearInterval(updateInterval);
+        }
+
+        // --- RECEPTION LOGIC ---
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('p_name').value;
+            const phone = document.getElementById('p_phone').value;
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone })
+                });
+                const data = await response.json();
+
+                document.getElementById('modalTitle').innerText = `Token #${data.token} Generated`;
+                document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code}`;
+                document.getElementById('trackLink').href = data.qr_url;
+
+                modal.style.display = 'flex';
+                form.reset();
+                updateReceptionStats();
+            } catch (err) {
+                alert('Registration failed');
+            }
+        });
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        async function updateReceptionStats() {
+            const res = await fetch('/api/queue');
+            const data = await res.json();
+            document.getElementById('totalCount').innerText = (data.waiting.length + data.completed_count + (data.current ? 1 : 0));
+        }
+
+        function startReceptionUpdates() {
+            updateReceptionStats();
+            // Clock
+            if (updateInterval) clearInterval(updateInterval);
+            updateInterval = setInterval(() => {
+                const el = document.getElementById('currentTime');
+                if (el) el.innerText = new Date().toLocaleTimeString();
+            }, 1000);
+        }
+
+        // --- DOCTOR LOGIC ---
+        async function updateDoctorDashboard() {
+            try {
+                const res = await fetch('/api/queue');
+                const data = await res.json();
+
+                // Current Patient
+                if (data.current) {
+                    document.getElementById('doc-currentToken').innerText = `#${data.current.token}`;
+                    document.getElementById('doc-currentName').innerText = data.current.name;
+                } else {
+                    document.getElementById('doc-currentToken').innerText = '--';
+                    document.getElementById('doc-currentName').innerText = 'No Patient';
+                }
+
+                // Waiting List
+                document.getElementById('doc-queueCount').innerText = data.waiting.length;
+                const container = document.getElementById('doc-queueList');
+                container.innerHTML = '';
+
+                data.waiting.forEach((p, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'queue-item fade-in';
+                    div.style.animationDelay = `${index * 0.05}s`;
+                    div.innerHTML = `
+                         <div>
+                            <span class="token-number" style="font-size: 1.2rem; margin-right: 1rem;">#${p.token}</span>
+                            <span style="font-weight: 600; color: var(--text);">${p.name}</span>
+                        </div>
+                        <span class="badge badge-waiting">⏳ Waiting</span>
+                    `;
+                    container.appendChild(div);
+                });
+
+                if (data.waiting.length === 0) {
+                    container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-light)">No patients waiting</div>';
+                }
+
+            } catch (err) {
+                console.error("Doctor update failed", err);
+            }
+        }
+
+        async function callNext() {
+            await fetch('/api/next', { method: 'POST' });
+            updateDoctorDashboard();
+        }
+
+        function startDoctorUpdates() {
+            updateDoctorDashboard();
+            updateInterval = setInterval(updateDoctorDashboard, 5000);
+        }
+
+    </script>
 </body>
 
 </html>

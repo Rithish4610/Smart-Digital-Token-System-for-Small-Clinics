@@ -1,125 +1,242 @@
+"""
+Twilio SMS Configuration Diagnostic Tool
+========================================
+This script helps diagnose Twilio SMS setup issues.
+"""
+
 import os
-from twilio.rest import Client
+import sys
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
-TWILIO_SID = os.getenv("TWILIO_ACCOUNT_SID")
-TWILIO_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-TWILIO_PHONE = os.getenv("TWILIO_PHONE_NUMBER")
+def print_header(text):
+    """Print a formatted header"""
+    print("\n" + "="*60)
+    print(f"  {text}")
+    print("="*60)
 
-print("=" * 70)
-print("TWILIO ACCOUNT DIAGNOSTICS")
-print("=" * 70)
-print()
+def print_status(label, status, details=""):
+    """Print a status line"""
+    symbol = "✓" if status else "✗"
+    color = "\033[92m" if status else "\033[91m"
+    reset = "\033[0m"
+    print(f"{color}{symbol}{reset} {label}")
+    if details:
+        print(f"  → {details}")
 
-try:
-    client = Client(TWILIO_SID, TWILIO_TOKEN)
+def check_env_file():
+    """Check if .env file exists"""
+    print_header("1. Checking .env File")
     
-    # Check account details
-    print("1. ACCOUNT STATUS:")
-    print("-" * 70)
-    account = client.api.accounts(TWILIO_SID).fetch()
-    print(f"   Account Name: {account.friendly_name}")
-    print(f"   Status: {account.status}")
-    print(f"   Type: {account.type}")
-    print()
+    env_exists = os.path.exists(".env")
+    print_status(".env file exists", env_exists)
     
-    # Check if trial account
-    if account.type == 'Trial':
-        print("   ⚠️  TRIAL ACCOUNT DETECTED")
-        print("   Trial accounts can ONLY send SMS to verified phone numbers!")
-        print()
+    if not env_exists:
+        print("\n⚠️  No .env file found!")
+        print("   Create one by copying .env.example:")
+        print("   copy .env.example .env")
+        print("   Then edit .env with your Twilio credentials")
+        return False
     
-    # Check balance
-    print("2. ACCOUNT BALANCE:")
-    print("-" * 70)
-    balance = client.api.balance.fetch()
-    print(f"   Balance: {balance.balance} {balance.currency}")
-    print()
-    
-    # Check phone number
-    print("3. PHONE NUMBER CHECK:")
-    print("-" * 70)
-    print(f"   Configured Number: {TWILIO_PHONE}")
-    try:
-        phone_numbers = client.incoming_phone_numbers.list(phone_number=TWILIO_PHONE)
-        if phone_numbers:
-            phone = phone_numbers[0]
-            print(f"   ✅ Number is valid and active")
-            print(f"   Capabilities:")
-            print(f"      - Voice: {phone.capabilities.get('voice', False)}")
-            print(f"      - SMS: {phone.capabilities.get('sms', False)}")
-            print(f"      - MMS: {phone.capabilities.get('mms', False)}")
-        else:
-            print(f"   ❌ Number NOT found in your account!")
-            print()
-            print("   Your available numbers:")
-            all_numbers = client.incoming_phone_numbers.list(limit=10)
-            for num in all_numbers:
-                print(f"      - {num.phone_number}")
-    except Exception as e:
-        print(f"   ⚠️  Could not verify number: {e}")
-    print()
-    
-    # List verified caller IDs (for trial accounts)
-    print("4. VERIFIED PHONE NUMBERS (Trial Account):")
-    print("-" * 70)
-    try:
-        verified_numbers = client.outgoing_caller_ids.list(limit=20)
-        if verified_numbers:
-            print("   SMS can be sent to these verified numbers:")
-            for caller in verified_numbers:
-                print(f"      ✅ {caller.phone_number}")
-        else:
-            print("   ❌ NO VERIFIED NUMBERS FOUND!")
-            print()
-            print("   You must verify phone numbers before sending SMS!")
-            print("   Visit: https://console.twilio.com/us1/develop/phone-numbers/manage/verified")
-    except Exception as e:
-        print(f"   Could not fetch verified numbers: {e}")
-    print()
-    
-    # Check recent messages
-    print("5. RECENT SMS ATTEMPTS:")
-    print("-" * 70)
-    try:
-        messages = client.messages.list(limit=5)
-        if messages:
-            for msg in messages:
-                status_icon = "✅" if msg.status == "delivered" else "❌" if msg.status == "failed" else "⏳"
-                print(f"   {status_icon} To: {msg.to} | Status: {msg.status} | Sent: {msg.date_sent}")
-                if msg.error_code:
-                    print(f"      Error Code: {msg.error_code} - {msg.error_message}")
-        else:
-            print("   No recent messages found")
-    except Exception as e:
-        print(f"   Could not fetch messages: {e}")
-    print()
-    
-    print("=" * 70)
-    print("SUMMARY:")
-    print("=" * 70)
-    
-    if account.type == 'Trial':
-        print("⚠️  YOUR ACCOUNT IS A TRIAL ACCOUNT")
-        print()
-        print("TO SEND SMS, YOU MUST:")
-        print("1. Verify the recipient's phone number at:")
-        print("   https://console.twilio.com/us1/develop/phone-numbers/manage/verified")
-        print()
-        print("2. OR upgrade your account to send to any number:")
-        print("   https://console.twilio.com/billing")
-        print()
-    else:
-        print("✅ Your account is upgraded - you can send to any valid number")
-        print()
-    
-    print("To test sending SMS, run: python test_send_sms.py")
-    print("=" * 70)
+    return True
 
-except Exception as e:
-    print(f"❌ ERROR: {e}")
-    print()
-    if "20003" in str(e):
-        print("Authentication failed - check your credentials in .env file")
+def check_credentials():
+    """Check if Twilio credentials are loaded"""
+    print_header("2. Checking Twilio Credentials")
+    
+    sid = os.getenv("TWILIO_ACCOUNT_SID")
+    token = os.getenv("TWILIO_AUTH_TOKEN")
+    phone = os.getenv("TWILIO_PHONE_NUMBER")
+    
+    # Check SID
+    sid_valid = sid and sid != "your_account_sid_here" and sid.startswith("AC")
+    print_status("TWILIO_ACCOUNT_SID loaded", bool(sid))
+    if sid:
+        if sid == "your_account_sid_here":
+            print("  → Still using placeholder value")
+        elif not sid.startswith("AC"):
+            print("  → Invalid format (should start with 'AC')")
+        else:
+            print(f"  → {sid[:10]}...{sid[-4:]}")
+    
+    # Check Token
+    token_valid = token and token != "your_auth_token_here" and len(token) == 32
+    print_status("TWILIO_AUTH_TOKEN loaded", bool(token))
+    if token:
+        if token == "your_auth_token_here":
+            print("  → Still using placeholder value")
+        else:
+            print(f"  → {'*' * 28}{token[-4:]}")
+    
+    # Check Phone
+    phone_valid = phone and phone != "your_twilio_number_here" and phone.startswith("+")
+    print_status("TWILIO_PHONE_NUMBER loaded", bool(phone))
+    if phone:
+        if phone == "your_twilio_number_here":
+            print("  → Still using placeholder value")
+        elif not phone.startswith("+"):
+            print("  → Missing country code (should start with '+')")
+        else:
+            print(f"  → {phone}")
+    
+    all_valid = sid_valid and token_valid and phone_valid
+    
+    if not all_valid:
+        print("\n⚠️  Credentials incomplete or invalid!")
+        print("   Edit your .env file with real Twilio credentials")
+        print("   See TWILIO_SETUP_GUIDE.md for instructions")
+    
+    return all_valid, sid, token, phone
+
+def test_twilio_connection(sid, token, phone):
+    """Test connection to Twilio API"""
+    print_header("3. Testing Twilio Connection")
+    
+    try:
+        from twilio.rest import Client
+        print_status("Twilio library installed", True)
+    except ImportError:
+        print_status("Twilio library installed", False, "Run: pip install twilio")
+        return False
+    
+    try:
+        client = Client(sid, token)
+        
+        # Test API connection by fetching account details
+        account = client.api.accounts(sid).fetch()
+        
+        print_status("Connected to Twilio API", True)
+        print(f"  → Account Status: {account.status}")
+        print(f"  → Account Type: {account.type}")
+        
+        # Get account balance
+        balance = client.api.accounts(sid).balance.fetch()
+        print(f"  → Balance: {balance.currency} {balance.balance}")
+        
+        return True
+        
+    except Exception as e:
+        print_status("Connected to Twilio API", False, str(e))
+        print("\n⚠️  Connection failed!")
+        print("   Double-check your ACCOUNT_SID and AUTH_TOKEN")
+        return False
+
+def test_phone_number(client, phone):
+    """Test if the phone number is valid and owned"""
+    print_header("4. Verifying Phone Number")
+    
+    try:
+        incoming_phone_numbers = client.incoming_phone_numbers.list(
+            phone_number=phone,
+            limit=1
+        )
+        
+        if incoming_phone_numbers:
+            number = incoming_phone_numbers[0]
+            print_status("Phone number verified", True)
+            print(f"  → Number: {number.phone_number}")
+            print(f"  → SMS Enabled: {number.capabilities['sms']}")
+            return True
+        else:
+            print_status("Phone number verified", False, 
+                        "This number is not in your Twilio account")
+            return False
+            
+    except Exception as e:
+        print_status("Phone number verification", False, str(e))
+        return False
+
+def send_test_sms(client, from_phone):
+    """Optionally send a test SMS"""
+    print_header("5. Send Test SMS (Optional)")
+    
+    print("\nWould you like to send a test SMS?")
+    print("Note: For trial accounts, recipient must be verified.")
+    
+    choice = input("Send test SMS? (y/n): ").lower().strip()
+    
+    if choice != 'y':
+        print("Skipped test SMS")
+        return
+    
+    to_phone = input("Enter recipient phone number (with country code, e.g., +919876543210): ").strip()
+    
+    if not to_phone.startswith('+'):
+        print("❌ Phone number must start with + and country code")
+        return
+    
+    try:
+        message = client.messages.create(
+            body="🏥 Test SMS from Smart Clinic Token System - Your Twilio SMS is working!",
+            from_=from_phone,
+            to=to_phone
+        )
+        
+        print_status("Test SMS sent", True)
+        print(f"  → Message SID: {message.sid}")
+        print(f"  → Status: {message.status}")
+        print(f"  → To: {message.to}")
+        
+    except Exception as e:
+        print_status("Test SMS sent", False, str(e))
+        
+        if "not a verified phone number" in str(e).lower():
+            print("\n⚠️  Phone number not verified!")
+            print("   For trial accounts, verify numbers at:")
+            print("   https://console.twilio.com/phone-numbers/verified")
+
+def main():
+    """Main diagnostic routine"""
+    print("\n" + "🏥 " + "="*58)
+    print("  Smart Clinic Token System - Twilio SMS Diagnostics")
+    print("="*61 + "\n")
+    
+    # Step 1: Check .env file
+    if not check_env_file():
+        sys.exit(1)
+    
+    # Step 2: Check credentials
+    creds_valid, sid, token, phone = check_credentials()
+    if not creds_valid:
+        sys.exit(1)
+    
+    # Step 3: Test connection
+    try:
+        from twilio.rest import Client
+        client = Client(sid, token)
+        
+        if not test_twilio_connection(sid, token, phone):
+            sys.exit(1)
+        
+        # Step 4: Test phone number
+        test_phone_number(client, phone)
+        
+        # Step 5: Optional test SMS
+        send_test_sms(client, phone)
+        
+    except ImportError:
+        print("\n⚠️  Twilio library not installed!")
+        print("   Run: pip install twilio")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n❌ Unexpected error: {e}")
+        sys.exit(1)
+    
+    # Success summary
+    print_header("✅ Diagnostic Complete")
+    print("\nYour Twilio SMS configuration appears to be working!")
+    print("\nNext steps:")
+    print("  1. Restart the application: python main.py")
+    print("  2. Go to: http://localhost:8000/reception")
+    print("  3. Register a patient with a verified phone number")
+    print("  4. Check if SMS is received")
+    print("\n📚 For more help, see: TWILIO_SETUP_GUIDE.md\n")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n\nDiagnostic cancelled by user.")
+        sys.exit(0)

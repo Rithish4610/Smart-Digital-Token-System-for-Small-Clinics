@@ -8,7 +8,7 @@ from contextlib import contextmanager
 
 import qrcode
 from fastapi import FastAPI, Request, Form, HTTPException, Depends
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -91,14 +91,13 @@ async def home_page(request: Request):
     """Home page with navigation to all system features"""
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/reception", response_class=HTMLResponse)
-async def reception_page(request: Request):
-    """Reception dashboard for patient registration"""
-    return templates.TemplateResponse("reception.html", {"request": request})
+@app.get("/reception")
+async def reception_page():
+    return RedirectResponse(url="/")
 
-@app.get("/doctor", response_class=HTMLResponse)
-async def doctor_page(request: Request):
-    return templates.TemplateResponse("doctor.html", {"request": request})
+@app.get("/doctor")
+async def doctor_page():
+    return RedirectResponse(url="/")
 
 @app.get("/display", response_class=HTMLResponse)
 async def display_page(request: Request):
