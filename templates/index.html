@@ -395,15 +395,30 @@
                 });
                 const data = await response.json();
 
-                document.getElementById('modalTitle').innerText = `Token #${data.token}`;
-                document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code}`;
-                document.getElementById('trackLink').href = data.qr_url;
+                if (data.id) {
+                    document.getElementById('modalTitle').innerText = `Token #${data.token}`;
+                    document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code}`;
+                    document.getElementById('trackLink').href = data.qr_url;
 
-                modal.style.display = 'flex';
-                form.reset();
-                updateReceptionStats();
+                    modal.style.display = 'flex';
+                    form.reset();
+                    updateReceptionStats();
+
+                    // SMS Feedback
+                    if (data.sms_success) {
+                        if (window.showToast) showToast("Token generated & SMS sent!", "success");
+                    } else {
+                        // Show warning for SMS failure
+                        const msg = data.sms_status || "SMS Failed (Check console)";
+                        if (window.showToast) showToast("⚠️ " + msg, "warning");
+                        else alert("⚠️ " + msg);
+                    }
+                } else {
+                    alert('Registration failed');
+                }
             } catch (err) {
-                alert('Registration failed');
+                console.error(err);
+                alert('Registration failed: ' + err.message);
             }
         });
 
