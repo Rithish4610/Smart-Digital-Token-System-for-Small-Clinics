@@ -18,7 +18,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* slate-900 gradient */
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,122 +30,128 @@
         .role-cards {
             display: flex;
             gap: 2rem;
-            margin-top: 2rem;
+            margin-top: 3rem;
             flex-wrap: wrap;
             justify-content: center;
+            padding: 0 1rem;
         }
 
         .role-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 3rem;
-            border-radius: 2rem;
+            background: #ffffff;
+            padding: 2.5rem 2rem;
+            border-radius: 1rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 250px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+            width: 260px;
             text-decoration: none;
-            /* For link compatibility */
-            color: inherit;
+            color: #1e293b;
+            /* slate-800 */
+            border: 1px solid #e2e8f0;
+            /* slate-200 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .role-card:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: #2563eb;
+            /* primary blue */
         }
 
         .role-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #2563eb;
+            /* primary blue */
+            background: #eff6ff;
+            /* blue-50 */
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
 
         .role-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            background: var(--gradient-secondary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #1e293b;
         }
 
-        /* Specific Views */
+        .role-desc {
+            font-size: 0.875rem;
+            color: #64748b;
+            /* slate-500 */
+        }
+
+        /* Portal Navigation */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Transitions */
         .dashboard-view {
             display: none;
             padding-top: 2rem;
-            min-height: 100vh;
+            min-height: calc(100vh - 70px);
         }
 
         .dashboard-view.active {
             display: block;
-            animation: fadeIn 0.6s ease;
+            animation: fadeIn 0.4s ease-out;
         }
 
-        /* Top Bar for Logged In View */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 1rem 2rem;
-            background: var(--surface);
-            box-shadow: var(--shadow-sm);
-            align-items: center;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: background 0.2s;
-        }
-
-        .back-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: var(--primary);
-        }
-
-        /* Doctor Dashboard Specifics */
+        /* Queue List */
         .queue-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem;
-            border-bottom: 1px solid rgba(94, 96, 206, 0.1);
-            transition: all 0.3s ease;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background-color 0.2s;
         }
 
         .queue-item:hover {
-            background: linear-gradient(135deg, rgba(94, 96, 206, 0.05) 0%, rgba(6, 214, 160, 0.05) 100%);
-            transform: translateX(5px);
+            background-color: #f8fafc;
         }
 
-        .current-card {
-            background: linear-gradient(135deg, #5e60ce 0%, #7209b7 100%);
-            color: white;
-            box-shadow: 0 12px 32px rgba(94, 96, 206, 0.4);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            text-align: center;
+        .queue-item:last-child {
+            border-bottom: none;
         }
 
-        .current-card h1,
-        .current-card h2,
-        .current-card p {
-            color: white;
+        .token-display {
+            font-family: 'Inter', sans-serif;
+            font-variant-numeric: tabular-nums;
         }
 
-        .token-number {
-            font-weight: 800;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
         }
     </style>
 </head>
@@ -153,33 +160,35 @@
 
     <!-- ROLE SELECTOR -->
     <div id="role-selector">
-        <h1 class="hero-title" style="font-size: 3rem; color: white; margin-bottom: 1rem;">🏥 Clinic Portal</h1>
-        <p style="color: rgba(255,255,255,0.9); margin-bottom: 3rem; font-size: 1.2rem;">Select your role to access the
-            system</p>
+        <div style="text-align: center;">
+            <i class="fa-solid fa-notes-medical" style="font-size: 4rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+            <h1 style="font-size: 2.5rem; color: white; margin-bottom: 0.5rem; font-weight: 700;">Clinic Portal</h1>
+            <p style="color: #94a3b8; font-size: 1.1rem;">Secure Access Gateway</p>
+        </div>
 
         <div class="role-cards">
             <div class="role-card" onclick="enterPortal('reception')">
-                <div class="role-icon">📋</div>
+                <div class="role-icon"><i class="fa-solid fa-hospital-user"></i></div>
                 <div class="role-title">Receptionist</div>
-                <div style="color: var(--text-light)">Register & Issue Tokens</div>
+                <div class="role-desc">Patient Registration</div>
             </div>
 
             <div class="role-card" onclick="enterPortal('doctor')">
-                <div class="role-icon">👨‍⚕️</div>
+                <div class="role-icon"><i class="fa-solid fa-user-doctor"></i></div>
                 <div class="role-title">Doctor</div>
-                <div style="color: var(--text-light)">Manage Consultations</div>
+                <div class="role-desc">Consultation & Queue</div>
             </div>
 
             <a href="/display" target="_blank" class="role-card">
-                <div class="role-icon">📺</div>
+                <div class="role-icon"><i class="fa-solid fa-tv"></i></div>
                 <div class="role-title">Display Screen</div>
-                <div style="color: var(--text-light)">Open Public View (New Tab)</div>
+                <div class="role-desc">Public Queue View</div>
             </a>
 
             <a href="/statistics" class="role-card">
-                <div class="role-icon">📊</div>
-                <div class="role-title">Statistics</div>
-                <div style="color: var(--text-light)">View Analytics</div>
+                <div class="role-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                <div class="role-title">Analytics</div>
+                <div class="role-desc">Performance Stats</div>
             </a>
         </div>
     </div>
@@ -187,11 +196,13 @@
     <!-- MAIN PORTAL CONTAINER -->
     <div id="portal-container" style="display: none;">
         <nav class="top-bar">
-            <div style="font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+            <div
+                style="font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 0.75rem; color: #1e293b;">
+                <i class="fa-solid fa-notes-medical" style="color: #2563eb;"></i>
                 <span id="portal-title">Portal</span>
             </div>
-            <button class="back-btn" onclick="exitPortal()">
-                ← Switch Role
+            <button class="btn btn-secondary" onclick="exitPortal()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Switch Role
             </button>
         </nav>
 
@@ -199,41 +210,59 @@
         <div id="reception-view" class="dashboard-view container">
             <div class="header">
                 <div>
-                    <h1>🏥 Clinic Reception</h1>
-                    <p style="color: var(--text-light);">Register new patients and issue tokens</p>
+                    <h1><i class="fa-solid fa-hospital-user" style="color: #2563eb; margin-right: 0.5rem;"></i>
+                        Reception Dashboard</h1>
+                    <p>Register new patients and manage token issuance.</p>
                 </div>
-                <div class="btn btn-secondary glow-on-hover" id="currentTime" style="font-weight: 700;">00:00:00</div>
+                <div class="btn btn-secondary" style="font-family: monospace; font-weight: 700; font-size: 1.1rem;">
+                    <i class="fa-regular fa-clock"></i> <span id="currentTime">00:00:00</span>
+                </div>
             </div>
 
             <div class="card fade-in">
-                <h2 style="margin-bottom: 1.5rem;">📋 New Patient Registration</h2>
+                <h2
+                    style="margin-bottom: 1.5rem; font-size: 1.25rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem;">
+                    <i class="fa-solid fa-user-plus" style="margin-right: 0.5rem; color: #0f766e;"></i>
+                    New Patient Registration
+                </h2>
                 <form id="registrationForm">
-                    <div class="input-group">
-                        <label for="p_name">👤 Patient Name</label>
-                        <input type="text" id="p_name" placeholder="Enter full name" required>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="input-group">
+                            <label for="p_name"><i class="fa-solid fa-user" style="margin-right: 0.25rem;"></i> Full
+                                Name</label>
+                            <input type="text" id="p_name" placeholder="E.g. John Doe" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="p_phone"><i class="fa-solid fa-phone" style="margin-right: 0.25rem;"></i> Phone
+                                Number</label>
+                            <input type="tel" id="p_phone" placeholder="10-digit mobile number" required>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label for="p_phone">📱 Phone Number</label>
-                        <input type="tel" id="p_phone" placeholder="Enter 10-digit phone number" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary glow-on-hover" style="width: 100%;">
-                        ✨ Register & Generate Token
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                        <i class="fa-solid fa-print"></i> Register & Generate Token
                     </button>
                 </form>
             </div>
 
             <div style="margin-top: 2.5rem;">
-                <h3 style="margin-bottom: 1.5rem;">📊 Today's Summary</h3>
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; color: #64748b;">
+                    <i class="fa-solid fa-chart-simple"></i> Daily Overview
+                </h3>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                     <div class="card" style="text-align: center; padding: 1.5rem;">
-                        <div style="font-size: 0.85rem; color: var(--text-light); font-weight: 600;">Total Registered
-                        </div>
-                        <div id="totalCount" class="text-gradient" style="font-size: 2.5rem; font-weight: 900;">0</div>
+                        <div
+                            style="font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">
+                            Total Patients</div>
+                        <div id="totalCount"
+                            style="font-size: 2.5rem; font-weight: 700; color: #2563eb; margin-top: 0.5rem;">0</div>
                     </div>
                     <div class="card" style="text-align: center; padding: 1.5rem;">
-                        <div style="font-size: 0.85rem; color: var(--text-light); font-weight: 600;">System Status</div>
-                        <div style="font-size: 1.5rem; margin-top: 0.5rem;"><span
-                                class="status-indicator status-active"></span> Online</div>
+                        <div
+                            style="font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">
+                            System Status</div>
+                        <div style="font-size: 1.25rem; margin-top: 1rem; color: #10b981; font-weight: 600;">
+                            <span class="status-indicator status-active"></span> Operational
+                        </div>
                     </div>
                 </div>
             </div>
@@ -243,24 +272,30 @@
         <div id="doctor-view" class="dashboard-view container">
             <div class="header">
                 <div>
-                    <h1>👨‍⚕️ Doctor's Dashboard</h1>
-                    <p style="color: var(--text-light);">Manage your consultation queue</p>
+                    <h1><i class="fa-solid fa-user-doctor" style="color: #2563eb; margin-right: 0.5rem;"></i> Doctor's
+                        Console</h1>
+                    <p>Manage patient queue and consultations.</p>
                 </div>
-                <button class="btn btn-primary glow-on-hover" onclick="callNext()">📞 Call Next Patient</button>
+                <button class="btn btn-primary" onclick="callNext()">
+                    <i class="fa-solid fa-bullhorn"></i> Call Next Patient
+                </button>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
                 <!-- Currently Calling -->
                 <div class="current-card fade-in">
-                    <p style="opacity: 0.9; font-weight: 600; font-size: 0.9rem; text-transform: uppercase;">Currently
-                        Calling</p>
-                    <h1 id="doc-currentToken" style="font-size: 4rem; margin: 1rem 0; font-weight: 900;">--</h1>
-                    <h2 id="doc-currentName" style="margin: 0; font-size: 1.8rem;">No Patient</h2>
-                    <div style="margin-top: 2rem;">
+                    <p
+                        style="opacity: 0.8; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                        In Consultation</p>
+                    <h1 id="doc-currentToken" class="token-display"
+                        style="font-size: 4.5rem; margin: 1.5rem 0; font-weight: 800; color: white;">--</h1>
+                    <h2 id="doc-currentName" style="margin: 0; font-size: 1.5rem; color: white; font-weight: 500;">No
+                        Patient Selected</h2>
+                    <div style="margin-top: 2.5rem;">
                         <button class="btn"
-                            style="background: rgba(255,255,255,0.25); color: white; width: 100%; backdrop-filter: blur(10px);"
+                            style="background: rgba(255,255,255,0.2); color: white; width: 100%; border: 1px solid rgba(255,255,255,0.3);"
                             onclick="callNext()">
-                            ✅ Mark Complete & Next
+                            <i class="fa-solid fa-check"></i> Complete & Next
                         </button>
                     </div>
                 </div>
@@ -268,8 +303,12 @@
                 <!-- Waiting Queue -->
                 <div class="card fade-in" style="padding: 0;">
                     <div
-                        style="padding: 1.5rem; border-bottom: 1px solid rgba(94, 96, 206, 0.1); background: rgba(94, 96, 206, 0.05);">
-                        <h3 style="margin: 0;">📋 Waiting List (<span id="doc-queueCount">0</span>)</h3>
+                        style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                        <h3 style="margin: 0; font-size: 1rem; color: #64748b;">
+                            <i class="fa-solid fa-list-ol" style="margin-right: 0.5rem;"></i> Waiting Queue <span
+                                class="badge" style="background: #2563eb; color: white; margin-left: 0.5rem;"
+                                id="doc-queueCount">0</span>
+                        </h3>
                     </div>
                     <div id="doc-queueList" style="max-height: 500px; overflow-y: auto;">
                         <!-- Dynamic list -->
@@ -282,17 +321,31 @@
     <!-- QR Modal (Shared) -->
     <div id="qrModal">
         <div class="modal-content fade-in">
-            <h2 id="modalTitle">Token #12 Generated</h2>
-            <div id="qrImageContainer" style="margin: 1.5rem 0;">
-                <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px;">
+            <div style="margin-bottom: 1.5rem;">
+                <i class="fa-solid fa-ticket" style="font-size: 3rem; color: #2563eb;"></i>
             </div>
+            <h2 id="modalTitle" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Token Generated</h2>
+            <p style="color: #64748b; font-size: 0.9rem;">Scan or use the link below to track status.</p>
+
+            <div id="qrImageContainer"
+                style="margin: 1.5rem 0; padding: 1rem; background: #fff; border: 1px solid #e2e8f0; display: inline-block; border-radius: 0.5rem;">
+                <img id="qrImage" src="" alt="QR Code" style="width: 180px; height: 180px; display: block;">
+            </div>
+
             <p style="margin-bottom: 1.5rem;">
-                <a id="trackLink" href="#" target="_blank" style="color: var(--primary); text-decoration: none;">Track
-                    Link</a>
+                <a id="trackLink" href="#" target="_blank" class="btn btn-secondary"
+                    style="width: 100%; justify-content: center;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Tracking Page
+                </a>
             </p>
-            <div style="display: flex; gap: 1rem;">
-                <button class="btn btn-secondary" onclick="window.print()" style="flex: 1">Print</button>
-                <button class="btn btn-primary" onclick="closeModal()" style="flex: 1">Done</button>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button class="btn btn-secondary" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+                <button class="btn btn-primary" onclick="closeModal()">
+                    <i class="fa-solid fa-check"></i> Done
+                </button>
             </div>
         </div>
     </div>
@@ -313,11 +366,11 @@
 
             if (role === 'reception') {
                 document.getElementById('reception-view').classList.add('active');
-                document.getElementById('portal-title').innerHTML = '📋 Reception Portal';
+                document.getElementById('portal-title').innerHTML = 'Reception Portal';
                 startReceptionUpdates();
             } else if (role === 'doctor') {
                 document.getElementById('doctor-view').classList.add('active');
-                document.getElementById('portal-title').innerHTML = '👨‍⚕️ Doctor Portal';
+                document.getElementById('portal-title').innerHTML = 'Doctor Portal';
                 startDoctorUpdates();
             }
         }
@@ -325,7 +378,7 @@
         function exitPortal() {
             document.getElementById('role-selector').style.display = 'flex';
             document.getElementById('portal-container').style.display = 'none';
-            clearInterval(updateInterval);
+            if (updateInterval) clearInterval(updateInterval);
         }
 
         // --- RECEPTION LOGIC ---
@@ -342,7 +395,7 @@
                 });
                 const data = await response.json();
 
-                document.getElementById('modalTitle').innerText = `Token #${data.token} Generated`;
+                document.getElementById('modalTitle').innerText = `Token #${data.token}`;
                 document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code}`;
                 document.getElementById('trackLink').href = data.qr_url;
 
@@ -399,17 +452,17 @@
                     div.className = 'queue-item fade-in';
                     div.style.animationDelay = `${index * 0.05}s`;
                     div.innerHTML = `
-                         <div>
-                            <span class="token-number" style="font-size: 1.2rem; margin-right: 1rem;">#${p.token}</span>
-                            <span style="font-weight: 600; color: var(--text);">${p.name}</span>
+                         <div style="display: flex; align-items: center;">
+                            <span style="font-weight: 700; color: #2563eb; font-size: 1.1rem; width: 60px;">#${p.token}</span>
+                            <span style="font-weight: 500; color: #1e293b;">${p.name}</span>
                         </div>
-                        <span class="badge badge-waiting">⏳ Waiting</span>
+                        <span class="badge badge-waiting"><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> Waiting</span>
                     `;
                     container.appendChild(div);
                 });
 
                 if (data.waiting.length === 0) {
-                    container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-light)">No patients waiting</div>';
+                    container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-clipboard-check" style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5;"></i><br>No patients in queue</div>';
                 }
 
             } catch (err) {
