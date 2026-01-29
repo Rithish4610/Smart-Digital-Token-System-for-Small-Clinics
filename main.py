@@ -57,12 +57,13 @@ def send_sms(to_phone: str, message: str):
     if not all([TWILIO_SID, TWILIO_TOKEN, TWILIO_PHONE]) or \
        TWILIO_SID == "your_sid_here" or \
        TWILIO_TOKEN == "your_token_here" or \
-       TWILIO_PHONE == "your_twilio_number_here":
+       TWILIO_PHONE == "your_twilio_number_here" or \
+       "YOUR_" in TWILIO_SID:
         print(f"------------ MOCK SMS (No Valid Credentials) ------------")
         print(f"To: {to_phone}")
         print(f"Message: {message}")
         print(f"--------------------------------------------------------")
-        return
+        return False, "Mock SMS (Credentials not configured)"
 
     try:
         client = Client(TWILIO_SID, TWILIO_TOKEN)
@@ -72,8 +73,14 @@ def send_sms(to_phone: str, message: str):
             to=to_phone
         )
         print(f"SMS SENT: To {to_phone}")
+        return True, "Sent successfully"
     except Exception as e:
-        print(f"SMS FAILED: {str(e)}")
+        error_msg = str(e)
+        print(f"SMS FAILED: {error_msg}")
+        # Simplify error for UI
+        if "unverified" in error_msg.lower():
+            return False, "Failed: Number not verified (Trial Account)"
+        return False, f"Failed: {error_msg[:50]}..."
 
 # --- FastAPI App ---
 app = FastAPI(title="Smart Clinic Token System")
@@ -174,13 +181,15 @@ async def register_patient(data: PatientCreate, request: Request, conn: sqlite3.
     
     # Send SMS Notification
     sms_message = f"Hello {data.name}, your token is #{next_token}. Track your turn live: {qr_url}"
-    send_sms(data.phone, sms_message)
+    sms_success, sms_status = send_sms(data.phone, sms_message)
     
     return {
         "id": new_id,
         "token": next_token,
         "qr_code": img_str,
-        "qr_url": qr_url
+        "qr_url": qr_url,
+        "sms_success": sms_success,
+        "sms_status": sms_status
     }
 
 @app.get("/api/queue")
