@@ -5,6 +5,12 @@
     --surface: #ffffff;
     --surface-glass: rgba(255, 255, 255, 0.7);
 
+    /* Missing Variables Added */
+    --primary: #2563eb;
+    --bg: #f8fafc;
+    --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    --gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+
     /* Text Colors */
     --text: #1a202c;
     --text-light: #718096;
