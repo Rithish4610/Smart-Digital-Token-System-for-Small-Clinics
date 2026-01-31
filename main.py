@@ -12,10 +12,10 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from twilio.rest import Client
 from dotenv import load_dotenv
+from fast2sms_client import send_sms
 
-load_dotenv();
+load_dotenv()
 
 # --- Database Setup ---
 DB_NAME = "clinic.db"
@@ -46,41 +46,6 @@ def get_db_conn():
         yield conn
     finally:
         conn.close()
-
-# --- Twilio Setup ---
-TWILIO_SID = os.getenv("TWILIO_ACCOUNT_SID")
-TWILIO_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-TWILIO_PHONE = os.getenv("TWILIO_PHONE_NUMBER")
-
-def send_sms(to_phone: str, message: str):
-    # Send SMS using Twilio
-    if not all([TWILIO_SID, TWILIO_TOKEN, TWILIO_PHONE]) or \
-       TWILIO_SID == "your_sid_here" or \
-       TWILIO_TOKEN == "your_token_here" or \
-       TWILIO_PHONE == "your_twilio_number_here" or \
-       "YOUR_" in TWILIO_SID:
-        print(f"------------ MOCK SMS (No Valid Credentials) ------------")
-        print(f"To: {to_phone}")
-        print(f"Message: {message}")
-        print(f"--------------------------------------------------------")
-        return False, "Mock SMS (Credentials not configured)"
-
-    try:
-        client = Client(TWILIO_SID, TWILIO_TOKEN)
-        client.messages.create(
-            body=message,
-            from_=TWILIO_PHONE,
-            to=to_phone
-        )
-        print(f"SMS SENT: To {to_phone}")
-        return True, "Sent successfully"
-    except Exception as e:
-        error_msg = str(e)
-        print(f"SMS FAILED: {error_msg}")
-        # Simplify error for UI
-        if "unverified" in error_msg.lower():
-            return False, "Failed: Number not verified (Trial Account)"
-        return False, f"Failed: {error_msg[:50]}..."
 
 # --- FastAPI App ---
 app = FastAPI(title="Smart Clinic Token System")
