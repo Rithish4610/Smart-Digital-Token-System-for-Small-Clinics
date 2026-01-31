@@ -223,30 +223,48 @@ async def statistics_page(request: Request):
     return templates.TemplateResponse("statistics.html", {"request": request})
 
 @app.get("/api/statistics")
-async def get_statistics(conn: sqlite3.Connection = Depends(get_db_conn)):
-    """Get comprehensive statistics"""
+async def get_statistics(period: str = "today", conn: sqlite3.Connection = Depends(get_db_conn)):
+    """Get comprehensive statistics with filtering"""
     cursor = conn.cursor()
     
-    # Total patients today
-    cursor.execute("SELECT COUNT(*) as count FROM patients WHERE DATE(created_at) = DATE('now')")
-    total_today = cursor.fetchone()['count']
+    # Date Filtering Logic
+    date_filter = "DATE(created_at) = DATE('now')"
+    if period == "week":
+        date_filter = "DATE(created_at) >= DATE('now', '-7 days')"
+    elif period == "month":
+        date_filter = "DATE(created_at) >= DATE('now', '-30 days')"
+    elif period == "all":
+        date_filter = "1=1"  # No filter
+
+    # Total patients for period
+    cursor.execute(f"SELECT COUNT(*) as count FROM patients WHERE {date_filter}")
+    total = cursor.fetchone()['count']
     
-    # Completed today
-    cursor.execute("SELECT COUNT(*) as count FROM patients WHERE status = 'completed' AND DATE(created_at) = DATE('now')")
-    completed_today = cursor.fetchone()['count']
+    # Completed for period
+    cursor.execute(f"SELECT COUNT(*) as count FROM patients WHERE status = 'completed' AND {date_filter}")
+    completed = cursor.fetchone()['count']
     
-    # Waiting now
+    # Waiting now (Always current waiting queue, independent of history view usually, but helps context)
+    # Actually, "Waiting" is a current state, so it shouldn't really be filtered by history, 
+    # but for consistent "Totals" it makes sense to show how many *from that period* are waiting (if any still are).
+    # However, usually "Waiting" implies "Currently in queue". 
+    # Let's keep "Waiting" as "Current Realtime Queue" because that's what the card implies ⏳.
     cursor.execute("SELECT COUNT(*) as count FROM patients WHERE status = 'waiting'")
     waiting_now = cursor.fetchone()['count']
     
     # Average wait time (simplified - 5 mins per patient)
     avg_wait = waiting_now * 5
     
-    # Hourly flow for today
-    cursor.execute("""
+    # Hourly flow for period
+    # For 'week'/'month'/'all', hourly flow might look messy if aggregated by hour of day across multiple days.
+    # But for simplicity, let's just show graph of "Activity by Hour of Day" (Time distribution)
+    # Or "Activity by Date" would be better for week/month?
+    # Given the frontend chart calls it "Patient Flow Today" it implies hourly.
+    # Let's keep it as "Hour of creation" to show peak times regardless of day for aggregate views.
+    cursor.execute(f"""
         SELECT strftime('%H:00', created_at) as hour, COUNT(*) as count 
         FROM patients 
-        WHERE DATE(created_at) = DATE('now')
+        WHERE {date_filter}
         GROUP BY hour
         ORDER BY hour
     """)
@@ -257,8 +275,8 @@ async def get_statistics(conn: sqlite3.Connection = Depends(get_db_conn)):
     peak_hours = [{"time": h['hour'], "count": h['count']} for h in peak_hours]
     
     return {
-        "total": total_today,
-        "completed": completed_today,
+        "total": total,
+        "completed": completed,
         "waiting": waiting_now,
         "avgWaitTime": avg_wait,
         "hourlyFlow": hourly_flow,
